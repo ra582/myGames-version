@@ -38,7 +38,7 @@
             <span class="small">Adquirido em {{g.date | date : 'dd/MM/yyyy'}}.</span>
 
 
-            <a title="Editar {{g.title}}"><i class="fas fa-fw fa-edit"></i></a>
+            <a title="Editar {{g.title}}" [routerLink]="['/edit', g.id]"><i class="fas fa-fw fa-edit"></i></a>
             <a title="Apagar {{g.title}}" (click)="deleteGame(g.id, g.title)"><i class="fas fa-fw fa-trash-alt"></i></a>
         </div>
 

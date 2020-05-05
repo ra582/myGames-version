@@ -4,6 +4,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import * as $ from 'jquery';
 
 import { GameForm } from '../classes/game-form';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-form',
@@ -14,15 +15,58 @@ export class FormComponent implements OnInit {
 
 gameForm: GameForm = new GameForm();
 
-  platforms: Observable<any[]>;
+platforms: Observable<any[]> = this.db.collection('platforms', (ref) => ref.orderBy('name')).valueChanges();
 
-  constructor(private db: AngularFirestore) {
+  id: string = this.route.snapshot.paramMap.get('id');
 
-    this.platforms = this.db.collection('platforms', (ref) => ref.orderBy('name')).valueChanges();
+  constructor(
 
-  }
+    private db: AngularFirestore,
+
+    private route: ActivatedRoute,
+
+    private router: Router
+
+
+    ) {}
+
+
+
+
 
   ngOnInit(): void {
+
+    if (this.id !== null) {
+
+    this.gameForm.id = this.id;
+
+    this.db.collection<any>('games').doc(this.id).ref.get().then(
+
+      (doc) => {
+
+        if (doc.exists) {
+
+          this.gameForm.id = doc.id;
+          this.gameForm.title = doc.data().title;
+          this.gameForm.cover = doc.data().cover;
+          this.gameForm.description = doc.data().description;
+          this.gameForm.platform = doc.data().platform;
+          this.gameForm.media = doc.data().media;
+          this.gameForm.date = doc.data().date;
+
+        } else {
+          alert('Documento não encontrado!\n Clique em [Ok] para continuar ...');
+
+          this.router.navigate(['/list']);
+        }
+      }
+    ).catch(
+
+      (error) => {
+        console.error('Falha ao obter o documento: ' , error);
+      }
+    );
+    }
 
     $(document).ready(() => {
       $(window).resize(() => {
@@ -60,7 +104,29 @@ gameForm: GameForm = new GameForm();
 
     } else {
 
+      this.db.collection<any>('games').doc(this.id).set(
 
+   {
+     title: this.gameForm.title,
+     cover: this.gameForm.cover,
+     description: this.gameForm.description,
+     platform: this.gameForm.platform,
+     media: this.gameForm.media,
+     date: this.gameForm.date
+
+   }
+
+      ).then(
+        () => {
+        alert(`"${this.gameForm.title}" atualizado com sucesso!\n\nClique em [Ok] para continuar.`);
+
+        this.router.navigate(['/list']);
+    }
+      ).catch(
+        (error) =>{
+          console.error('Falha ao atualizar Db', error);
+        }
+      );
     }
 
 

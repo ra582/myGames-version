@@ -15,6 +15,7 @@ import { AboutComponent } from './about/about.component';
 import { FormComponent } from './form/form.component';
 
 import {FormsModule} from '@angular/forms';
+import { EditComponent } from './edit/edit.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import {FormsModule} from '@angular/forms';
     NewComponent,
     E404Component,
     AboutComponent,
-    FormComponent
+    FormComponent,
+    EditComponent
   ],
   imports: [
     BrowserModule,
